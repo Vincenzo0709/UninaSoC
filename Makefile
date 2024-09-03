@@ -7,7 +7,7 @@ hw:
 
 .PHONY: xilinx
 xilinx:
-	${MAKE} -C ${XILIN_ROOT} bitstream
+	${MAKE} -C ${XILINX_ROOT} bitstream
 
 .PHONY: sw
 sw:

@@ -1,14 +1,14 @@
 
 # Create new project (no force)
-create_project $::env(XILINX_PROJECT_NAME) . -part $::env(XILINX_PART) # -force
-set_property board_part $::env(XILINX_BOARD) [current_project]
+create_project $::env(XILINX_PROJECT_NAME) . -part $::env(XILINX_PART_NUMBER) -force
+# set_property board_part $::env(XILINX_BOARD) [current_project]
 
 # Add sources
-source ../tcl/add_xilinx_sources.tcl
+source $::env(XILINX_ROOT)/synth/tcl/add_xilinx_sources.tcl
 
 # Load constraints
-import_files -fileset constrs_1 -norecurse $::env(XILIN_ROOT)/constraints/$::env(XILINX_PROJECT_NAME)/.xdc
-import_files -fileset constrs_1 -norecurse $::env(XILIN_ROOT)/constraints/${board}.xdc
+import_files -fileset constrs_1 -norecurse $::env(XILINX_ROOT)/synth/constraints/$::env(XILINX_PROJECT_NAME).xdc
+import_files -fileset constrs_1 -norecurse $::env(XILINX_ROOT)/synth/constraints/$::env(XILINX_BOARD).xdc
 
 # Import IPS
 read_ip $::env(XILINX_IP_LIST_XCI)

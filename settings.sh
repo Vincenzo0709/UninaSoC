@@ -40,8 +40,11 @@ export VLTSTD_INC=/usr/share/verilator/include/vltstd/
 export XILINX_PROJECT_NAME=uninasoc
 # Target device
 # ZCU102
-export XILINX_PART_NUMBER=xczu9eg-ffvb1156-2-i
-export XILINX_BOARD=xilinx.com:zcu102:part0:3.4
+# export XILINX_PART_NUMBER=xczu9eg-ffvb1156-2-i
+# export XILINX_BOARD=xilinx.com:zcu102:part0:3.4
+# Nexsys A7
+export XILINX_PART_NUMBER=xc7a100tcsg324-1
+export XILINX_BOARD=Nexys-A7-100T-Master
 # Root directoriy
 export XILINX_ROOT=${ROOT_DIR}/hw/xilinx
 export XILINX_IPS_ROOT=${XILINX_ROOT}/ips

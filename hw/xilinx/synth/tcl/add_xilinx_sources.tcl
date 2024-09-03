@@ -1,3 +1,4 @@
-TODO:
-+ add base sources from hw/rtl/sources.txt
-+ add xilinx-only sources 
+add_files -norecurse -fileset [current_fileset] [list \
+    $::env(XILINX_ROOT)/rtl/uninasoc_pkg.sv \
+    $::env(XILINX_ROOT)/rtl/uninasoc.sv \
+]
