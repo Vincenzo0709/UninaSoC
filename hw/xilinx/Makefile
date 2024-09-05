@@ -1,28 +1,33 @@
 # Basic variables for Vivado
 XILINX_VIVADO_CMD ?= vivado
 XILINX_VIVADO_MODE ?= batch
-# Output directory of Vivado's compilation reports
-XILINX_PROJECT_REPORTS_DIR ?= ${XILINX_ROOT}/${XILINX_PROJECT_NAME}/reports
-# List of the Xilinx IPs to build and import in the design
-# TODO: consider parsing directory ips/
-XILINX_IP_LIST ?= xlnx_axi_crossbar 		\
-					xlnx_axi_gpio_in 		\
-					xlnx_axi_gpio_out		\
-					xlnx_axi_uartlite 		\
-					xlnx_blk_mem_gen		\
-					xlnx_jtag_axi		 	\
-					xlnx_clk_wiz			\
-					xlnx_vio 				\
+# Build directory
+XILINX_PROJECT_BUILD_DIR ?= ${XILINX_ROOT}/build/
+# Vivado project directory
+XILINX_PROJECT_DIR ?= ${XILINX_PROJECT_BUILD_DIR}/${XILINX_PROJECT_NAME}
+# Vivado's compilation reports directory
+XILINX_PROJECT_REPORTS_DIR ?= ${XILINX_PROJECT_BUILD_DIR}/reports
 
-# List of IPs' xci
+
+# List of the Xilinx IPs to build and import in the design
+# Parsing from directory ips/
+XILINX_IP_LIST = $(shell basename --multiple ${XILINX_IPS_ROOT}/xlnx_*)
+
+# List of IPs' xci files
 XILINX_IP_LIST_XCI := $(foreach ip,${XILINX_IP_LIST},${XILINX_IPS_ROOT}/${ip}/build/${ip}.srcs/sources_1/ip/${ip}/${ip}.xci)
 
 #path to demo_j2a compilation script
 COMPILE_BLINKLED_SCRIPT_PATH := sw/src/PoC_jtag2axi/compile.sh
 
+# Runtime optimized run strategies
+SYNTH_STRATEGY ?= Flow_RuntimeOptimized
+IMPL_STRATEGY ?= Flow_RuntimeOptimized
+
 # Full environment variables list for Vivado
 # XILINX_PROJECT_LTX=${XILINX_PROJECT_LTX}
 XILINX_VIVADO_ENV ?=              					\
+	SYNTH_STRATEGY=${SYNTH_STRATEGY}				\
+	IMPL_STRATEGY=${IMPL_STRATEGY}					\
     XILINX_PART_NUMBER=${XILINX_PART_NUMBER}   		\
     XILINX_PROJECT_NAME=${XILINX_PROJECT_NAME}   	\
     XILINX_BOARD=${XILINX_BOARD}   					\
@@ -42,13 +47,24 @@ XILINX_VIVADO_BATCH := ${XILINX_VIVADO_ENV} ${XILINX_VIVADO_CMD} -mode batch
 
 all: bitstream
 
+# Open project
+open:
+	cd ${XILINX_PROJECT_BUILD_DIR};			\
+	${XILINX_VIVADO_ENV} ${XILINX_VIVADO_CMD} \
+	-mode tcl ${XILINX_PROJECT_NAME}.xpr
+
+# Open project
+gui:
+	cd ${XILINX_PROJECT_BUILD_DIR};			\
+	${XILINX_VIVADO_ENV} ${XILINX_VIVADO_CMD} \
+	-mode gui ${XILINX_PROJECT_NAME}.xpr
+
 # Build bitstream from scratch
 bitstream: ips
-	mkdir -p build/${XILINX_PROJECT_NAME}
-	mkdir -p build/${XILINX_PROJECT_REPORTS_DIR}
-	cd build/${XILINX_PROJECT_NAME};	 	\
-	${XILINX_VIVADO_ENV} ${XILINX_VIVADO} 	\
-		-source ${XILINX_ROOT}/synth/tcl/build_bitstream.tcl
+	mkdir -p ${XILINX_PROJECT_DIR}
+	mkdir -p ${XILINX_PROJECT_REPORTS_DIR}
+	cd ${XILINX_PROJECT_BUILD_DIR};			\
+	${XILINX_VIVADO} -source ${XILINX_ROOT}/synth/tcl/build_bitstream.tcl
 
 # Generate ips
 XILINX_IP_NAMES ?= $(addsuffix .xci, ${XILINX_IP_LIST})
@@ -67,11 +83,19 @@ ips: ${XILINX_IP_NAMES}
 		-source ${XILINX_IPS_ROOT}/common/post_config.tcl
 	touch $@
 
+# Start hardware server
+start_hw_server:
+	hw_server -stcp::3232 -p3120 --init=/home/vcu128-02/vivado_scripts/hw_server_startup.txt
+
 # Open Vivado hardware manager
 open_hw_manager:
 	${XILINX_VIVADO} \
-		-source ${XILINX_SYNTH_TCL_ROOT}/open_hw_manager.tcl \
-		-source ${XILINX_SYNTH_TCL_ROOT}/set_ila_trigger.tcl
+		-source ${XILINX_SYNTH_TCL_ROOT}/$@.tcl
+# -source ${XILINX_SYNTH_TCL_ROOT}/set_ila_trigger.tcl
+
+program_bitstream:
+	${XILINX_VIVADO} \
+		-source ${XILINX_SYNTH_TCL_ROOT}/$@.tcl
 
 # Simulation
 sim_compile_simlib:
@@ -105,8 +129,14 @@ demo_j2a:
 
 # Clean up project
 clean:
-	rm -rf ${XILINX_PROJECT_NAME}
+	rm -rf ${XILINX_PROJECT_BUILD_DIR}
 
 clean_ips:
 	rm -rf ${XILINX_IPS_ROOT}/*/build
 	rm -rf *.xci
+
+###########
+# PHONIES #
+###########
+.PHONY: open gui bitstream ips open_hw_manager sim_compile_simlib clean clean_ips
+

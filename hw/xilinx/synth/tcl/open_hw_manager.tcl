@@ -2,7 +2,7 @@
 # Description: Open Vivado Hardware Manager
 
 # First check if the probe file exists
-exec ls $::env(XILINX_PROJECT_LTX) 
+# exec ls $::env(XILINX_PROJECT_LTX) 
 
 # Connect to hw server
 open_hw_manager
@@ -14,10 +14,11 @@ set target $::env(XILINX_HW_SERVER_HOST):$::env(XILINX_HW_SERVER_PORT)/$::env(XI
 open_hw_target $target
 set_property PARAM.FREQUENCY 15000000 [get_hw_targets $target]
 
-puts "Using probe file $::env(XILINX_PROJECT_LTX)"
-set_property PROBES.FILE      $::env(XILINX_PROJECT_LTX) [get_hw_devices $::env(XILINX_FPGA_DEVICE)]
-set_property FULL_PROBES.FILE $::env(XILINX_PROJECT_LTX) [get_hw_devices $::env(XILINX_FPGA_DEVICE)]
-current_hw_device                                        [get_hw_devices $::env(XILINX_FPGA_DEVICE)]
+# TODO: when adding ILAs
+# puts "Using probe file $::env(XILINX_PROJECT_LTX)"
+# set_property PROBES.FILE      $::env(XILINX_PROJECT_LTX) [get_hw_devices $::env(XILINX_FPGA_DEVICE)]
+# set_property FULL_PROBES.FILE $::env(XILINX_PROJECT_LTX) [get_hw_devices $::env(XILINX_FPGA_DEVICE)]
+# current_hw_device                                        [get_hw_devices $::env(XILINX_FPGA_DEVICE)]
 
 puts "Query the design"
 # Debug

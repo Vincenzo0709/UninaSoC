@@ -5,6 +5,7 @@ create_ip -name blk_mem_gen -vendor xilinx.com -library ip -version 8.4 -module_
 set_property -dict [list CONFIG.Interface_Type {AXI4} \
                         CONFIG.AXI_Slave_Type {Memory_Slave} \
 			CONFIG.Use_AXI_ID {true} \
+                        CONFIG.AXI_ID_Width {2} \
 			CONFIG.Use_Byte_Write_Enable {TRUE} \
                         CONFIG.Memory_Type {Simple_Dual_Port_RAM} \
                         CONFIG.Byte_Size {8} \
@@ -27,4 +28,3 @@ set_property -dict [list CONFIG.Interface_Type {AXI4} \
                         CONFIG.Coe_File {no_coe_file_loaded} \
                         CONFIG.Fill_Remaining_Memory_Locations {true} \
                 ] [get_ips $::env(IP_NAME)]
-#NOTE CONFIG.Use_Byte_Write_Enable may give a warning that the parameter is disabled 

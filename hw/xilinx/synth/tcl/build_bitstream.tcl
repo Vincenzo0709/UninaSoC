@@ -14,7 +14,7 @@ import_files -fileset constrs_1 -norecurse $::env(XILINX_ROOT)/synth/constraints
 read_ip $::env(XILINX_IP_LIST_XCI)
 
 # Set top level module
-set_property top uninasoc_top [current_fileset]
+set_property top $::env(XILINX_PROJECT_NAME) [current_fileset]
 
 # Generate compilation order
 update_compile_order -fileset sources_1
@@ -31,12 +31,12 @@ synth_design -rtl -name rtl_1
 # Synthesis #
 #############
 # Set strategy
-set_property STRATEGY                                           $::env(SYNTH_STRATEGY)   [get_runs synth_1]
-# Preserve the net names and hierarchy for debug
+# set_property STRATEGY                                           $::env(SYNTH_STRATEGY)   [get_runs synth_1]
+# # Preserve the net names and hierarchy for debug
 set_property STEPS.SYNTH_DESIGN.ARGS.FLATTEN_HIERARCHY          none                     [get_runs synth_1]
 set_property STEPS.SYNTH_DESIGN.ARGS.KEEP_EQUIVALENT_REGISTERS  true                     [get_runs synth_1]
-# Enable retiming in synthesis
-set_property STEPS.SYNTH_DESIGN.ARGS.RETIMING                   true                     [get_runs synth_1]
+# # Enable retiming in synthesis
+# set_property STEPS.SYNTH_DESIGN.ARGS.RETIMING                   true                     [get_runs synth_1]
 
 # Run
 launch_runs synth_1
@@ -50,16 +50,15 @@ report_utilization -hierarchical -hierarchical_percentage   -file reports/$::env
 ############
 # Add ILAs #
 ############
-source ../tcl/add_ilas.tcl
+source $::env(XILINX_ROOT)/synth/tcl/add_ilas.tcl
 
 ##################
 # Implementation #
 ##################
 # Runtime optimized build
-set_property "steps.place_design.args.directive"            "RuntimeOptimized"       [get_runs impl_1]
-set_property "steps.route_design.args.directive"            "RuntimeOptimized"       [get_runs impl_1]
-# Set strategy
-set_property STRATEGY                                       Flow_RuntimeOptimized  [get_runs impl_1]
+# set_property "steps.place_design.args.directive"            "RuntimeOptimized"       [get_runs impl_1]
+# set_property "steps.route_design.args.directive"            "RuntimeOptimized"       [get_runs impl_1]
+# # Set strategy
 # set_property STRATEGY                                       $::env(IMPL_STRATEGY)    [get_runs impl_1]
 # # Enable physical optimizations (longer runtime)
 # set_property STEPS.PHYS_OPT_DESIGN.IS_ENABLED 		        true                     [get_runs impl_1]

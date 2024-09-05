@@ -1,4 +1,3 @@
-# /https://github.com/MaistoV/UninaSoC/blob/main/hw/xilinx/rtl/uninasoc.sv#L1 :
 # Author: Zaira Abdel Majid <z.abdelmajid@studenti.unina.it>
 # Description: a useful .sh to compile a sample Blink Led PoC
 # Output: bilnk.elf, blink.bin 

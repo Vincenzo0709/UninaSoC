@@ -1,5 +1,4 @@
 # ------------------------------------------------------------------------
-# /https://github.com/MaistoV/UninaSoC/blob/main/hw/xilinx/rtl/uninasoc.sv#L1 :
 # Author: Zaira Abdel Majid <z.abdelmajid@studenti.unina.it>
 # Description: tcl script used to transfer a .bin file in a BRam memory using jtag2axi IP and axi transactions
 # Input args: 
