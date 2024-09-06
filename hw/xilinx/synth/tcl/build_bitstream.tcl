@@ -3,8 +3,12 @@
 create_project $::env(XILINX_PROJECT_NAME) . -part $::env(XILINX_PART_NUMBER) -force
 # set_property board_part $::env(XILINX_BOARD) [current_project]
 
+# Suppress Warning
+# The IP file <...> has been moved from its original location, as a result the outputs for this IP will now be generated in <...>. Alternatively a copy of the IP can be imported into the project using one of the 'import_ip' or 'import_files' commands.
+set_msg_config -id {[Vivado 12-13650]} -suppress
+
 # Add sources
-source $::env(XILINX_ROOT)/synth/tcl/add_xilinx_sources.tcl
+source $::env(XILINX_SYNTH_TCL_ROOT)/add_xilinx_sources.tcl
 
 # Load constraints
 import_files -fileset constrs_1 -norecurse $::env(XILINX_ROOT)/synth/constraints/$::env(XILINX_PROJECT_NAME).xdc
@@ -50,7 +54,7 @@ report_utilization -hierarchical -hierarchical_percentage   -file reports/$::env
 ############
 # Add ILAs #
 ############
-source $::env(XILINX_ROOT)/synth/tcl/add_ilas.tcl
+source $::env(XILINX_SYNTH_TCL_ROOT)/add_ilas.tcl
 
 ##################
 # Implementation #

@@ -1,17 +1,9 @@
-open_hw_manager
-connect_hw_server -url $::env(XILINX_HW_SERVER_HOST):$::env(XILINX_HW_SERVER_PORT)
-open_hw_target $::env(XILINX_HW_SERVER_HOST):$::env(XILINX_HW_SERVER_PORT)/$::env(XILINX_FPGA_PATH)
+# Author: Vincenzo Maisto <vincenzo.maisto2@unina.it>
+# Description: Program bitstream
 
-if {$::env(XILINX_BOARD) eq "Nexys-A7-100T-Master"} {
-  set hw_device [get_hw_devices TBD]
-}
-if {$::env(XILINX_BOARD) eq "ALVEO"} {
-  set hw_device [get_hw_devices TBD]
-}
+# Connects to hw_server and sets variable hw_device
+source  $::env(XILINX_SYNTH_TCL_ROOT)/open_hw_manager.tcl
 
-set_property PARAM.FREQUENCY 15000000 [get_hw_targets *]
-
-current_hw_device $hw_device
 set_property PROGRAM.FILE $::env(XILINX_BITSTREAM) $hw_device
 program_hw_devices $hw_device
 refresh_hw_device [lindex $hw_device 0]

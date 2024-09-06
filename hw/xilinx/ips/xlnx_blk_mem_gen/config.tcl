@@ -1,6 +1,11 @@
 # Import IP
 create_ip -name blk_mem_gen -vendor xilinx.com -library ip -version 8.4 -module_name $::env(IP_NAME)
-# Configure IP
+
+# COE file to pre-load in BRAM
+# set coe_file $::env(BOOTROM_COE)
+# For now, just no preload
+set coe_file no_coe_file_loaded
+
 # Configure IP
 set_property -dict [list CONFIG.Interface_Type {AXI4} \
                         CONFIG.AXI_Slave_Type {Memory_Slave} \
@@ -25,6 +30,6 @@ set_property -dict [list CONFIG.Interface_Type {AXI4} \
                         CONFIG.Port_B_Enable_Rate {100} \
                         CONFIG.EN_SAFETY_CKT {true} \
                         CONFIG.Load_Init_File {false} \
-                        CONFIG.Coe_File {no_coe_file_loaded} \
+                        CONFIG.Coe_File {$coe_file} \
                         CONFIG.Fill_Remaining_Memory_Locations {true} \
                 ] [get_ips $::env(IP_NAME)]
