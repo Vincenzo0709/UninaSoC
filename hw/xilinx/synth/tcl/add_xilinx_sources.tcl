@@ -3,9 +3,9 @@
 
 # Define a list of all the source files
 set src_file_list [ list \
-    $::env(XILINX_ROOT)/rtl/uninasoc_pkg.sv             \
-    $::env(XILINX_ROOT)/rtl/unina_soc_axi_pkg.sv        \
-    $::env(XILINX_ROOT)/rtl/uninasoc.sv                 \
+    $::env(XILINX_ROOT)/rtl/uninasoc_pkg.sv  \
+    $::env(XILINX_ROOT)/rtl/uninasoc_axi.svh \
+    $::env(XILINX_ROOT)/rtl/uninasoc.sv      \
 ]
 
 # Add files to project

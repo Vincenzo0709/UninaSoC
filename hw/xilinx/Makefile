@@ -34,7 +34,7 @@ XILINX_VIVADO_ENV ?=              					\
 	XILINX_ROOT=${XILINX_ROOT}						\
     QUESTA_PATH=${QUESTA_PATH}   					\
     GCC_PATH=${GCC_PATH}   							\
-    XILINX_SIMLIB_PATH=${XILINX_SIMLIB_PATH}  
+    XILINX_SIMLIB_PATH=${XILINX_SIMLIB_PATH}
 
 # Package Vivado command in a single variable
 XILINX_VIVADO := ${XILINX_VIVADO_ENV} ${XILINX_VIVADO_CMD} -mode ${XILINX_VIVADO_MODE}
@@ -80,7 +80,7 @@ ips: ${XILINX_IP_NAMES}
 
 # Start hardware server
 start_hw_server:
-	hw_server -d -L- -stcp::${XILINX_HW_SERVER_PORT}  
+	hw_server -d -L- -stcp::${XILINX_HW_SERVER_PORT}
 
 # Open Vivado hardware manager
 open_hw_manager:
@@ -107,11 +107,12 @@ ${XILINX_SIM_IP_ROOT}/ips:
 
 bin_path ?= ${SW_ROOT}/src/PoC_jtag2axi/blink.bin # TODO: update this for bootrom
 base_address ?= 0x40000000 # BRAM base address
+JTAG_READBACK ?= false
 # Write elf to BRAM through jtag2axi
-jtag2axi_load_binary:
+jtag2axi_load_binary: ${bin_path}
 	${XILINX_VIVADO} \
 		-source ${XILINX_SYNTH_TCL_ROOT}/jtag2axi_load_binary.tcl \
-		-tclargs $(bin_path) $(base_address)
+		-tclargs ${bin_path} ${base_address} ${JTAG_READBACK}
 
 # Clean up project
 clean:
