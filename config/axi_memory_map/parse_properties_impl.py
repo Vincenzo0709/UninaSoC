@@ -13,7 +13,7 @@ import math
 # configuration Class declaration
 from configuration import *
 
-def read_Interfaces (
+def parse_Interfaces (
 		config,
 		property_name : str,
 		property_value: str,
@@ -22,20 +22,17 @@ def read_Interfaces (
 	# The range of possible values is (0..16) whith 1 as deafault value
 	# If the value is missing or is incorrect in the csv file,  default value is used
 	value = int(property_value)
-	if (property_value != ""):
-		if (value in range(0, 17)):
-			match property_name :
-				case "NUM_SI":
-					config.NUM_SI = value
-				case "NUM_MI":
-					config.NUM_MI = value
-		else:
-			logging.warning(property_name  + " out-of-range (0..16). Using default value.")
+	if (value in range(0, 17)):
+		match property_name :
+			case "NUM_SI":
+				config.NUM_SI = value
+			case "NUM_MI":
+				config.NUM_MI = value
 	else:
-		logging.info("No" + property_name  + " specified. Using default value.")
+		logging.warning(property_name  + " out-of-range (0..16). Using default value.")
 	return config
 
-def read_STRATEGY (
+def parse_STRATEGY (
 		config,
 		property_name : str,
 		property_value: str,
@@ -47,16 +44,13 @@ def read_STRATEGY (
 	# 2 => SAMD
 	# If the value is missing or is incorrect in the csv file,  default value is used
 	value = int(property_value)
-	if (property_value != ""):
-		if (value in range(0, 3)):
-			config.STRATEGY = value
-		else:
-			logging.warning("STRATEGY out-of-range [0 ; 2]. Using default value.")
+	if (value in range(0, 3)):
+		config.STRATEGY = value
 	else:
-		logging.info("No STRATEGY specified. Using default value.")
+		logging.warning("STRATEGY out-of-range [0 ; 2]. Using default value.")
 	return config
 
-def read_R_REGISTER (
+def parse_R_REGISTER (
 		config,
 		property_name : str,
 		property_value: str,
@@ -70,16 +64,13 @@ def read_R_REGISTER (
 		config.R_REGISTER = 0
 		logging.warning("configuration STRATEGY set to 2. By default Connectivity Mode is SAMD and R_REGISTER is 0. input Ignored.")
 	else:
-		if (property_value != ""):
-			if (value in range(0, 2)):
-				config.R_REGISTER = value
-			else:
-				logging.warning("R_REGISTER value out-of-range (0, 1). Using default value.")
+		if (value in range(0, 2)):
+			config.R_REGISTER = value
 		else:
-			logging.info("NoR_Regiter value specified. Using default value.")
+			logging.warning("R_REGISTER value out-of-range (0, 1). Using default value.")
 	return config
 
-def read_PROTOCOL (
+def parse_PROTOCOL (
 		config,
 		property_name : str,
 		property_value: str,
@@ -87,16 +78,13 @@ def read_PROTOCOL (
 	# Reads the AXI PROTOCOL Version
 	# The range of possible values is (AXI4, AXI4LITE, AXI3) whith AXI4 as deafault value
 	# If the value is missing or is incorrect in the csv file,  default value is used
-	if (property_value != ""):
-		if ((property_value == "AXI4") or (property_value == "AXI4LITE") or (property_value == "AXI3")):
-			config.PROTOCOL = property_value
-		else:
-			logging.warning("PROTOCOL invalid. Using default value (AXI4).")
+	if ((property_value == "AXI4") or (property_value == "AXI4LITE") or (property_value == "AXI3")):
+		config.PROTOCOL = property_value
 	else:
-		logging.info("NoPROTOCOL specified. Using default value (AXI4).")
+		logging.warning("PROTOCOL invalid. Using default value (AXI4).")
 	return config
 
-def read_ADDR_WIDTH (
+def parse_ADDR_WIDTH (
 		config,
 		property_name : str,
 		property_value: str,
@@ -107,18 +95,15 @@ def read_ADDR_WIDTH (
 	# 32 is the default value in every scenario
 	# If the value is missing or is incorrect in the csv file,  default value is used
 	value = int(property_value)
-	if (property_value != ""):
-		if ((config.PROTOCOL == "AXI4LITE") and (value in range(1, 65))):
-			config.ADDR_WIDTH = value
-		elif (((config.PROTOCOL == "AXI4") or (config.PROTOCOL == "AXI3")) and (value in range(12, 65))):
-			config.ADDR_WIDTH = value
-		else:
-			logging.warning("Address Width value isn't compatible with AXI PROTOCOL Used. Using default value.")
+	if ((config.PROTOCOL == "AXI4LITE") and (value in range(1, 65))):
+		config.ADDR_WIDTH = value
+	elif (((config.PROTOCOL == "AXI4") or (config.PROTOCOL == "AXI3")) and (value in range(12, 65))):
+		config.ADDR_WIDTH = value
 	else:
-		logging.warning("NoAddress Width value specified. Using default value.")
+		logging.warning("Address Width value isn't compatible with AXI PROTOCOL Used. Using default value.")
 	return config
 
-def read_DATA_WIDTH (
+def parse_DATA_WIDTH (
 		config,
 		property_name : str,
 		property_value: str,
@@ -129,24 +114,21 @@ def read_DATA_WIDTH (
 	# 32 is the default value in every scenario
 	# If the value is missing or is incorrect in the csv file,  default value is used
 	value = int(property_value)
-	if (property_value != ""):
-		DATA_WIDTH_Found = False
-		Base_Data = 32
-		while ((DATA_WIDTH_Found == False) and (Base_Data <= 1024)):
-			if (value == Base_Data):
-				DATA_WIDTH_Found = True
-			Base_Data = Base_Data * 2
-		if ((config.PROTOCOL == "AXI4LITE") and ((value == 32) or (value == 64))):
-			config.DATA_WIDTH = value
-		elif (((config.PROTOCOL == "AXI4") or (config.PROTOCOL == "AXI3")) and (DATA_WIDTH_Found == True)):
-			config.DATA_WIDTH = value
-		else:
-			logging.warning("Data Width value isn't compatible with AXI PROTOCOL Used. Using default value.")
+	DATA_WIDTH_Found = False
+	Base_Data = 32
+	while ((DATA_WIDTH_Found == False) and (Base_Data <= 1024)):
+		if (value == Base_Data):
+			DATA_WIDTH_Found = True
+		Base_Data = Base_Data * 2
+	if ((config.PROTOCOL == "AXI4LITE") and ((value == 32) or (value == 64))):
+		config.DATA_WIDTH = value
+	elif (((config.PROTOCOL == "AXI4") or (config.PROTOCOL == "AXI3")) and (DATA_WIDTH_Found == True)):
+		config.DATA_WIDTH = value
 	else:
-		logging.warning("NoData Width value specified. Using default value.")
+		logging.warning("Data Width value isn't compatible with AXI PROTOCOL Used. Using default value.")
 	return config
 
-def read_IDWidth_UsersWidth_AddrRanges (
+def parse_IDWidth_UsersWidth_AddrRanges (
 		config,
 		property_name : str,
 		property_value: str,
@@ -154,40 +136,37 @@ def read_IDWidth_UsersWidth_AddrRanges (
 		higher_bound  : int,
     ):
 	# Reads the Data Width applied to all Master Interfacess
-	# The range of possible values is [4 ; 32] whith 4 as deafault value
+	# The range of possible values is (4..32) whith 4 as deafault value
 
 	# Reads User Widths used by each Interface (the AXI PROTOCOL Signals)
-	# The range of possible values is [0 ; 1024] whith 0 as deafault value
+	# The range of possible values is (0..1024) whith 0 as deafault value
 
-	# Reads the number of Address Ranges applaied to all Master Interfaces
+	# Reads the number of Address Ranges applied to all Master Interfaces
 	# The range of possible values is (1..16) whith 1 as deafault value
 
 	# If the values are missing or are incorrect in the csv file,  default value is used
 	value = int(property_value)
-	if (property_value != ""):
-		if (value in range(lower_bound, higher_bound+1)):
-			match property_name :
-				case "ID_WIDTH":
-					config.ID_WIDTH = value
-				case "AWUSER_WIDTH":
-					config.AWUSER_WIDTH = value
-				case "ARUSER_WIDTH":
-					config.ARUSER_WIDTH = value
-				case "WUSER_WIDTH":
-					config.WUSER_WIDTH = value
-				case "RUSER_WIDTH":
-					config.RUSER_WIDTH = value
-				case "BUSER_WIDTH":
-					config.BUSER_WIDTH = value
-				case "ADDR_RANGES":
-					config.ADDR_RANGES = value
-		else:
-			logging.warning(property_name  + " value out-of-range [" + str(lower_bound) + " ; " + str(higher_bound) + "]. Using default value.")
+	if (value in range(lower_bound, higher_bound+1)):
+		match property_name :
+			case "ID_WIDTH":
+				config.ID_WIDTH = value
+			case "AWUSER_WIDTH":
+				config.AWUSER_WIDTH = value
+			case "ARUSER_WIDTH":
+				config.ARUSER_WIDTH = value
+			case "WUSER_WIDTH":
+				config.WUSER_WIDTH = value
+			case "RUSER_WIDTH":
+				config.RUSER_WIDTH = value
+			case "BUSER_WIDTH":
+				config.BUSER_WIDTH = value
+			case "ADDR_RANGES":
+				config.ADDR_RANGES = value
 	else:
-		logging.info("No" + property_name  + " value specified. Using default value.")
+		logging.warning(property_name  + " value out-of-range (" + str(lower_bound) + ".." + str(higher_bound) + "). Using default value.")
 	return config
 
-def read_CONNECTIVITY_MODE (
+def parse_CONNECTIVITY_MODE (
 		config,
 		property_name : str,
 		property_value: str,
@@ -204,16 +183,13 @@ def read_CONNECTIVITY_MODE (
 		config.CONNECTIVITY_MODE = "SAMD"
 		logging.warning("configuration STRATEGY set to 2. By default Connectivity Mode is SAMD. input ignored.")
 	else:
-		if (property_value != ""):
-			if ((property_value == "SASD") or (property_value == "SAMD")):
-				config.CONNECTIVITY_MODE = property_value
-			else:
-				logging.warning("Connectivity Mode invalid. Using default value (SASD).")
+		if ((property_value == "SASD") or (property_value == "SAMD")):
+			config.CONNECTIVITY_MODE = property_value
 		else:
-			logging.warning("Connectivity Mode invalid. Using default value (SASD).")
+			logging.warning("Connectivity Mode invalid. Using default value " + config.CONNECTIVITY_MODE + ".")
 	return config
 
-def read_Slave_Priority (
+def parse_Slave_Priority (
 		config,
 		property_name : str,
 		property_value: str,
@@ -221,10 +197,8 @@ def read_Slave_Priority (
 	# Reads every Slave Interface Priority
 	# The range of possible values is (0..16) whith 0 (Round-Robin) as deafault value
 	# If the values are missing or are incorrect in the csv file,  default value is used (input validity check is done for the single Slave)
-	values = []
-	if (property_value != ""):
-		values = property_value.split()
-	if ((len(values) == config.NUM_SI) and (property_value != "")):
+	values = property_value.split()
+	if ((len(values) == config.NUM_SI)):
 		for i in range(config.NUM_SI):
 			number = int(values[i])
 			if (number in range(0, 17)):
@@ -241,7 +215,7 @@ def read_Slave_Priority (
 		logging.warning("Not enough Priority values have been given. Using default values.")
 	return config
 
-def read_Acceptance (
+def parse_Acceptance (
 		config,
 		property_name : str,
 		property_value: str,
@@ -250,82 +224,80 @@ def read_Acceptance (
 	# The range of possible values is (1..32) whith 2 as deafault value
 	# SASD => 1
 	# If the value is missing or is incorrect in the csv file,  default or coherent value is used (input validity check is done for the single Slave)
-	values = []
-	if (property_value != ""):
-		values = property_value.split()
+	values = property_value.split()
 	if (config.CONNECTIVITY_MODE == "SASD"):
 		for i in range(config.NUM_SI):
 			match property_name :
-				case "SI_Read_Acceptance":
-					config.SI_Read_Acceptance.append(1)
-				case "SI_Write_Acceptance":
-					config.SI_Write_Acceptance.append(1)
+				case "SI_READ_ACCEPTANCE":
+					config.SI_READ_ACCEPTANCE.append(1)
+				case "SI_WRITE_ACCEPTANCE":
+					config.SI_WRITE_ACCEPTANCE.append(1)
 		logging.warning("Connectivity Mode set to SASD. By default every " + property_name  + " value is set to 1. input Ignored.")
-	elif ((len(values) == config.NUM_SI) and (property_value != "")):
+	elif ((len(values) == config.NUM_SI)):
 		for i in range(config.NUM_SI):
 			number = int(values[i])
 			if (number in range(1, 33)):
 				match property_name :
-					case "SI_Read_Acceptance":
-						config.SI_Read_Acceptance.append(number)
-					case "SI_Write_Acceptance":
-						config.SI_Write_Acceptance.append(number)
+					case "SI_READ_ACCEPTANCE":
+						config.SI_READ_ACCEPTANCE.append(number)
+					case "SI_WRITE_ACCEPTANCE":
+						config.SI_WRITE_ACCEPTANCE.append(number)
 			else:
 				match property_name :
-					case "SI_Read_Acceptance":
-						config.SI_Read_Acceptance.append(2)
-					case "SI_Write_Acceptance":
-						config.SI_Write_Acceptance.append(2)
+					case "SI_READ_ACCEPTANCE":
+						config.SI_READ_ACCEPTANCE.append(2)
+					case "SI_WRITE_ACCEPTANCE":
+						config.SI_WRITE_ACCEPTANCE.append(2)
+				si_index = ""
 				if (i < 10):
-					logging.warning("A " + property_name  + " value is out-of-range (1..32). Using default value for this Slave." + " - S0" + str(i))
+					si_index = "S0" + str(i)
 				else:
-					logging.warning("A " + property_name  + " value is out-of-range (1..32). Using default value for this Slave." + " - S" + str(i))
+					si_index = "S" + str(i)
+					logging.warning("A " + property_name  + " value is out-of-range (1..32). Using default value for this Slave." + " - " + si_index)
 	else:
 		for i in range(config.NUM_SI):
 				match property_name :
-					case "SI_Read_Acceptance":
-						config.SI_Read_Acceptance.append(2)
-					case "SI_Write_Acceptance":
-						config.SI_Write_Acceptance.append(2)
+					case "SI_READ_ACCEPTANCE":
+						config.SI_READ_ACCEPTANCE.append(2)
+					case "SI_WRITE_ACCEPTANCE":
+						config.SI_WRITE_ACCEPTANCE.append(2)
 		logging.warning("Not enough " + property_name  + " values have been given. Using default values.")
 	return config
 
-def read_Thread_ID_WIDTH (
+def parse_THREAD_ID_WIDTH (
 		config,
 		property_name : str,
 		property_value: str,
 	):
 	# Reads the number of ID bits used by each Slave Interface for its Thread IDs
 	# For the moment whe don't use the and these numbers are set to 0,  the default value (input validity check is done for the single Slave)
-	values = []
-	if (property_value != ""):
-		values = property_value.split()
+	values = property_value.split()
 	Bits_Available = math.floor(config.ID_WIDTH - math.log2(config.NUM_SI))
 	if (Bits_Available < 0):
 		Bits_Available = 0
 	Bits_Available = 0 # At the moment we don't need them
 	if (Bits_Available == 0):
 		for i in range(config.NUM_SI):
-			config.Thread_ID_WIDTH.append(0)
+			config.THREAD_ID_WIDTH.append(0)
 		logging.info("There are no bits available for Thread IDs. Setting all values to 0")
-	elif ((len(values) == config.NUM_SI) and (property_value != "")):
+	elif ((len(values) == config.NUM_SI)):
 		for i in range(config.NUM_SI):
 			number = int(values[i])
 			if (number in range(1, Bits_Available+1)):
-				config.Thread_ID_WIDTH.append(number)
+				config.THREAD_ID_WIDTH.append(number)
 			else:
-				config.Thread_ID_WIDTH.append(0)
+				config.THREAD_ID_WIDTH.append(0)
 				if (i < 10):
 					logging.warning("A Thread ID value is out-of-range [0 ; Bits_Available]. Using default value for this Slave." + " - S0" + str(i))
 				else:
 					logging.warning("A Thread ID value is out-of-range [0 ; Bits_Available]. Using default value for this Slave." + " - S" + str(i))
 	else:
 		for i in range(config.NUM_SI):
-			config.Thread_ID_WIDTH.append(0)
+			config.THREAD_ID_WIDTH.append(0)
 		logging.warning("Not enough Thread IDs values have been given. Using default values.")
 	return config
 
-def read_Single_Thread (
+def parse_SINGLE_THREAD (
 		config,
 		property_name : str,
 		property_value: str,
@@ -335,27 +307,25 @@ def read_Single_Thread (
 	# 0 => Multiple Threads
 	# 1 => Single Thread
 	# If the value is missing or is incorrect in the csv file,  default value is used (input validity check is done for the single Slave)
-	values = []
-	if (property_value != ""):
-		values = property_value.split()
-	if ((len(values) == config.NUM_SI) and (property_value != "")):
+	values = property_value.split()
+	if ((len(values) == config.NUM_SI)):
 		for i in range(config.NUM_SI):
 			number = int(values[i])
 			if (number in range(0, 2)):
-				config.Single_Thread.append(number)
+				config.SINGLE_THREAD.append(number)
 			else:
-				config.Single_Thread.append(0)
+				config.SINGLE_THREAD.append(0)
 				if (i < 10):
 					logging.warning("A Single Thread value is out-of-range (0, 1). Using default value for this Slave." + " - S0" + str(i))
 				else:
 					logging.warning("A Single Thread value is out-of-range (0, 1). Using default value for this Slave." + " - S" + str(i))
 	else:
 		for i in range(config.NUM_SI):
-			config.Single_Thread.append(0)
+			config.SINGLE_THREAD.append(0)
 		logging.warning("Not enough Single Thread values have been given. Using default values.")
 	return config
 
-def read_Base_ID (
+def parse_BASE_ID (
 		config,
 		property_name : str,
 		property_value: str,
@@ -364,68 +334,65 @@ def read_Base_ID (
 	# The range of possible values is [0x00000000 ; 0xffffffff] whith 0x00000000 as deafault value
 	# If the value is missing or is incorrect in the csv file,  default value is used
 	# It also check input format validity
-	values = []
-	if (property_value != ""):
-		values = property_value.split()
-	Correct_Format = True
+	values = property_value.split()
+	correct_format = True
 	if ((len(values) != config.NUM_SI) or (property_value == "")):
-		Correct_Format = False
+		correct_format = False
 	for i in range(config.NUM_SI):
-		if (Correct_Format == False):
+		if (correct_format == False):
 			break
 		if ((len(values[i]) != 10) or (values[i][0] != "0") or (values[i][1] != "x")):
-			Correct_Format = False
+			correct_format = False
 			break
 		for j in range(8):
 			if ((ord(values[i][j+2]) in range(48, 58)) or (ord(values[i][j+2]) in range (97, 103))):
 				continue
 			else:
-				Correct_Format = False
+				correct_format = False
 				break
-	if ((len(values) == config.NUM_SI) and (property_value != "") and (Correct_Format == True)):
+	if ((len(values) == config.NUM_SI) and (correct_format == True)):
 		for i in range(config.NUM_SI):
-			config.Base_ID.append(values[i])
+			config.BASE_ID.append(values[i])
 	else:
 		for i in range(config.NUM_SI):
-			config.Base_ID.append("0x00000000")
+			config.BASE_ID.append("0x00000000")
 		logging.warning("Not enough correct Base IDs values have been given. Using default values.")
 	return config
 
-def read_Issuing (
+def parse_Issuing (
 		config,
 		property_name : str,
 		property_value: str,
 	):
 	# Reads the number of Active Read or Write Transactions that each Master Interface can generate
 	# The range of possible values is (1..32) whith 4 as deafault value
-	# [AXI4LITE ; AXI3] => 1
+	# (AXI4LITE,AXI3) => 1
 	# If the value is missing or is incorrect in the csv file,  default or coherent value is used (input validity check is done for the single Master)
-	values = []
-	if (property_value != ""):
-		values = property_value.split()
+	values = property_value.split()
+
 	if ((config.PROTOCOL == "AXI3") or (config.PROTOCOL == "AXI4LITE")):
 		for i in range(config.NUM_MI):
 			match property_name :
-				case "MI_Read_Issuing":
-					config.MI_Read_Issuing.append(1)
-				case "MI_Write_Issuing":
-					config.MI_Write_Issuing.append(1)
+				case "MI_READ_ISSUING":
+					config.MI_READ_ISSUING.append(1)
+				case "MI_WRITE_ISSUING":
+					config.MI_WRITE_ISSUING.append(1)
 		logging.warning("PROTOCOL is set to " + config.PROTOCOL + ". By default every value is set to 1. input Ignored.")
-	elif ((len(values) == config.NUM_MI) and (property_value != "")):
+	elif ((len(values) == config.NUM_MI)):
 		for i in range(config.NUM_MI):
 			number = int(values[i])
 			if (number in range(1, 33)):
 				match property_name :
-					case "MI_Read_Issuing":
-						config.MI_Read_Issuing.append(number)
-					case "MI_Write_Issuing":
-						config.MI_Write_Issuing.append(number)
+					case "MI_READ_ISSUING":
+						config.MI_READ_ISSUING.append(number)
+					case "MI_WRITE_ISSUING":
+						config.MI_WRITE_ISSUING.append(number)
 			else:
 				match property_name :
-					case "MI_Read_Issuing":
-						config.MI_Read_Issuing.append(4)
-					case "MI_Write_Issuing":
-						config.MI_Write_Issuing.append(4)
+					case "MI_READ_ISSUING":
+						config.MI_READ_ISSUING.append(4)
+					case "MI_WRITE_ISSUING":
+						config.MI_WRITE_ISSUING.append(4)
 				if (i < 10):
 					logging.warning("An " + property_name  + " value is out-of-range (1..32). Using default value for this Master." + " - M0" + str(i))
 				else:
@@ -433,85 +400,88 @@ def read_Issuing (
 	else:
 		for i in range(config.NUM_MI):
 			match property_name :
-				case "MI_Read_Issuing":
-					config.MI_Read_Issuing.append(4)
-				case "MI_Write_Issuing":
-					config.MI_Write_Issuing.append(4)
+				case "MI_READ_ISSUING":
+					config.MI_READ_ISSUING.append(4)
+				case "MI_WRITE_ISSUING":
+					config.MI_WRITE_ISSUING.append(4)
 		logging.warning("Not enough correct " + property_name  + " values have been given. Using default values.")
 	return config
 
-def read_Secure(
+def parse_SECURE(
 		config,
 		property_name : str,
 		property_value: str,
 	):
 	# Reads the TrustZone Activation option for each Master Interface
 	# The range of possible values is (0, 1) whith 0 as deafault value
-	# 0 => Non Secure
-	# 1 => Secure
+	# 0 => Non SECURE
+	# 1 => SECURE
 	# If the value is missing or is incorrect in the csv file,  default value is used (input validity check is done for the single Master)
-	values = []
-	if (property_value != ""):
-		values = property_value.split()
-	if ((len(values) == config.NUM_MI) and (property_value != "")):
+	values = property_value.split()
+
+	if ((len(values) == config.NUM_MI)):
 		for i in range(config.NUM_MI):
 			number = int(values[i])
 			if (number in range(0, 2)):
-				config.Secure.append(number)
+				config.SECURE.append(number)
 			else:
-				config.Secure.append(0)
+				config.SECURE.append(0)
 				if (i < 10):
-					logging.warning("A Secure value is out-of-range (0, 1). Using default value for this Master." + " - M0" + str(i))
+					logging.warning("A SECURE value is out-of-range (0, 1). Using default value for this Master." + " - M0" + str(i))
 				else:
-					logging.warning("A Secure value is out-of-range (0, 1). Using default value for this Master." + " - M" + str(i))
+					logging.warning("A SECURE value is out-of-range (0, 1). Using default value for this Master." + " - M" + str(i))
 	else:
 		for i in range(config.NUM_MI):
-			config.Secure.append(0)
-		logging.warning("Not enough correct Secure values have been given. Using default values.")
+			config.SECURE.append(0)
+		logging.warning("Not enough correct SECURE values have been given. Using default values.")
 	return config
 
-def read_RANGE_BASE_ADDR (
+def parse_RANGE_BASE_ADDR (
 		config,
 		property_name : str,
 		property_value: str,
 	):
-	# Reads every 64 bit Range Base Address for each Master Interface
-	# The range of possible values is [0x0000000000000000 ; 0xffffffffffffffff] whith 0xffffffffffffffff (not used) as deafault value (0x0000000000100000 for the first Range of every Master)
-	# If the value is missing or is incorrect in the csv file,  default value is used
-	# It also check input format validity
-	values = []
-	if (property_value != ""):
-		values = property_value.split()
-	Correct_Format = True
-	if ((len(values) != config.NUM_MI*config.ADDR_RANGES) or (property_value == "")):
-		Correct_Format = False
-	for i in range(config.NUM_MI*config.ADDR_RANGES):
-		if (Correct_Format == False):
-			break
-		if ((len(values[i]) != 18) or (values[i][0] != "0") or (values[i][1] != "x")):
-			Correct_Format = False
-			break
-		for j in range(16):
-			if ((ord(values[i][j+2]) in range(48, 58)) or (ord(values[i][j+2]) in range (97, 103))):
-				continue
-			else:
-				Correct_Format = False
+	# Reads every up to 64-bit Range Base Address for each Master Interface
+	# The range of possible values is [0x0000000000000000 ; 0xffffffffffffffff] with 0xffffffffffffffff (not used) as deafault value (0x0000000000100000 for the first Range of every Master)
+	# If the value is missing or is incorrect, an error is generated
+
+	values = property_value.split()
+
+	# Check addresses format
+	correct_format = True
+	# If we have the right amount of strings
+	NUM_ADDRESSES = config.NUM_MI*config.ADDR_RANGES
+	if (len(values) == NUM_ADDRESSES):
+		# Check each string
+		for i in range(NUM_ADDRESSES):
+			# Must start with 0x or 0X
+			# Must be no longer than 64 bits, hence 16+2 chars
+			if (
+					(values[i][0] != "0") or \
+	   				(values[i][1] not in {"x","X"}) or \
+					(len(values[i]) > 18)
+				):
+				correct_format = False
 				break
-	if ((len(values) == config.NUM_MI*config.ADDR_RANGES) and (property_value != "") and (Correct_Format == True)):
-		for i in range(config.NUM_MI):
-			for j in range(config.ADDR_RANGES):
-				config.BASE_ADDR.append(values[config.ADDR_RANGES*i+j])
+			# Must contain only chars in "[0-9][A-F][a-f]"
+			for j in range(len(values[i])-2):
+				if not ((ord(values[i][j+2]) in range(48, 58)) or (ord(values[i][j+2]) in range (97, 103))):
+					correct_format = False
+					break
+		#
+		if correct_format:
+			# Save each string in config
+			for i in range(config.NUM_MI):
+				for j in range(config.ADDR_RANGES):
+					config.BASE_ADDR.append(values[(config.ADDR_RANGES * i) + j])
+		else:
+			logging.error("Wrong RANGE_BASE_ADDR format.")
 	else:
-		for i in range(config.NUM_MI):
-			for j in range(config.ADDR_RANGES):
-				if (j == 0):
-					config.BASE_ADDR.append("0x0000000000100000")
-				else:
-					config.BASE_ADDR.append("0xffffffffffffffff")
-		logging.warning("Not enough correct Ranges' Base Adress values have been given. Using default values.")
+		logging.error("Not enough correct RANGE_BASE_ADDR values.")
+	# Return
 	return config
 
-def read_RANGE_ADDR_WIDTH (
+def parse_RANGE_ADDR_WIDTH (
 		config,
 		property_name : str,
 		property_value: str,
@@ -520,10 +490,8 @@ def read_RANGE_ADDR_WIDTH (
 	# [AXI4 ; AXI3] => the range of possible values is (12..64) whith 0 as deafault value (12 for the first Range of every Master)
 	# AXI4LITE => the range of possible values is (1..64) whith 0 as deafault value (12 for the first Range of every Master)
 	# If the value is missing or is incorrect in the csv file,  default or coherent value is used (input validity check is done for the single Master)
-	values = []
-	if (property_value != ""):
-		values = property_value.split()
-	if ((len(values) == config.NUM_MI*config.ADDR_RANGES) and (property_value != "")):
+	values = property_value.split()
+	if ((len(values) == config.NUM_MI*config.ADDR_RANGES) ):
 		if (config.PROTOCOL == "AXI4LITE"):
 			for i in range(config.NUM_MI):
 				for j in range(config.ADDR_RANGES):
@@ -570,7 +538,7 @@ def read_RANGE_ADDR_WIDTH (
 		logging.warning("Not enough correct Range Width values have been given. Using default values.")
 	return config
 
-def read_Connectivity (
+def parse_Connectivity (
 		config,
 		property_name : str,
 		property_value: str,
@@ -580,25 +548,23 @@ def read_Connectivity (
 	# 0 => Connection Activated
 	# 1 => Connection Deactivated
 	# If the value is missing or is incorrect in the csv file,  default value is used (input validity check is done for the single Connection)
-	values = []
-	if (property_value != ""):
-		values = property_value.split()
-	if ((len(values) == config.NUM_MI*config.NUM_SI) and (property_value != "")):
+	values = property_value.split()
+	if ((len(values) == config.NUM_MI*config.NUM_SI)):
 		for i in range(config.NUM_MI):
 			for j in range(config.NUM_SI):
 				number = int(values[config.NUM_SI*i+j])
 				if (number in range(0, 2)):
 					match property_name :
-						case "Read_Connectivity":
-							config.Read_Connectivity.append(number)
-						case "Write_Connectivity":
-							config.Write_Connectivity.append(number)
+						case "READ_CONNECTIVITY":
+							config.READ_CONNECTIVITY.append(number)
+						case "WRITE_CONNECTIVITY":
+							config.WRITE_CONNECTIVITY.append(number)
 				else:
 					match property_name :
-						case "Read_Connectivity":
-							config.Read_Connectivity.append(1)
-						case "Write_Connectivity":
-							config.Write_Connectivity.append(1)
+						case "READ_CONNECTIVITY":
+							config.READ_CONNECTIVITY.append(1)
+						case "WRITE_CONNECTIVITY":
+							config.WRITE_CONNECTIVITY.append(1)
 					index = ""
 					if (i < 10):
 						index = " - M0" + str(i)
@@ -613,9 +579,9 @@ def read_Connectivity (
 		for i in range(config.NUM_MI):
 			for j in range(config.NUM_SI):
 				match property_name :
-					case "Read_Connectivity":
-						config.Read_Connectivity.append(1)
-					case "Write_Connectivity":
-						config.Write_Connectivity.append(1)
+					case "READ_CONNECTIVITY":
+						config.READ_CONNECTIVITY.append(1)
+					case "WRITE_CONNECTIVITY":
+						config.WRITE_CONNECTIVITY.append(1)
 		logging.warning("Not enough correct " + property_name  + " values have been given. Using default values.")
 	return config

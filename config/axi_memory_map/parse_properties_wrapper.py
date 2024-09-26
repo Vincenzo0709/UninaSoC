@@ -8,9 +8,9 @@
 ###################
 import logging
 # Contains all the operations to set the config Parameters according to provided csv config file
-from read_properties_impl import *
+from parse_properties_impl import *
 
-def read_property (
+def parse_property (
 		config,
 		property_name : str,
 		property_value: str,
@@ -19,8 +19,12 @@ def read_property (
 	# Whether to skip function call
 	skip_call = False
 
+	# Skip for emtpy strings or lists
+	if (property_value == []):
+		skip_call = True
+
 	# Compose function name
-	base_func_name = "read_"
+	base_func_name = "parse_"
 	base_args = "config, property_name, property_value"
 	additional_args = ""
 	function_call = ""
@@ -32,30 +36,30 @@ def read_property (
 			func_name = base_func_name + "Interfaces"
 		# STRATEGY, R_REGISTER, PROTOCOL, Address and Data Widths, Connectivity Mode Acquisition,
 		# Slave Priorities, Slave Thread IDs Width, Slave Single Thread Modes, Slave Base IDs,
-		# Master Secure Modes, Ranges' Base Address, Ranges' Width Acquisition
+		# Master SECURE Modes, Ranges' Base Address, Ranges' Width Acquisition
 		case "STRATEGY" | "R_REGISTER" | "PROTOCOL" | "ADDR_WIDTH" | "DATA_WIDTH" | "CONNECTIVITY_MODE" | \
-			"Slave_Priority" | "Thread_ID_WIDTH" | "Single_Thread" | "Base_ID" | "Secure" | "RANGE_BASE_ADDR" | "RANGE_ADDR_WIDTH":
+			"Slave_Priority" | "THREAD_ID_WIDTH" | "SINGLE_THREAD" | "BASE_ID" | "SECURE" | "RANGE_BASE_ADDR" | "RANGE_ADDR_WIDTH":
 			func_name = base_func_name + property_name
 		# ID Width Acquisition
 		case "ID_WIDTH":
 			func_name = base_func_name + "IDWidth_UsersWidth_AddrRanges"
-			additional_args = "4, 32"
+			additional_args = "1, 32"
 		# User Widths Acquisition
 		case "AWUSER_WIDTH" | "ARUSER_WIDTH" | "WUSER_WIDTH" | "RUSER_WIDTH" | "BUSER_WIDTH":
 			func_name = base_func_name + "IDWidth_UsersWidth_AddrRanges"
 			additional_args = "0, 1024"
-		# Addreass Ranges Acquisition
+		# Address Ranges Acquisition
 		case "ADDR_RANGES":
 			func_name = base_func_name + "IDWidth_UsersWidth_AddrRanges"
 			additional_args = "1, 16"
-		case "SI_Read_Acceptance" | "SI_Write_Acceptance":
+		case "SI_READ_ACCEPTANCE" | "SI_WRITE_ACCEPTANCE":
 		# Slave Read and Write Acceptance Acquisition
 			func_name = base_func_name + "Acceptance"
 		# Master Read and Write Acquisition
-		case "MI_Read_Issuing" | "MI_Write_Issuing":
+		case "MI_READ_ISSUING" | "MI_WRITE_ISSUING":
 			func_name = base_func_name + "Issuing"
 		# Read and Write Connectivity Acquisition
-		case "Read_Connectivity" | "Write_Connectivity":
+		case "READ_CONNECTIVITY" | "WRITE_CONNECTIVITY":
 			func_name = base_func_name + "Connectivity"
 		# Ignored args
 		case "SLAVE_NAMES":
@@ -69,7 +73,7 @@ def read_property (
 	# Call function
 	if not skip_call:
 		function_call = func_name + "(" + base_args + ", " + additional_args + ")"
-		print("[DEBUG] Calling "+ function_call)
+		# print("[DEBUG] Calling "+ function_call)
 		config = eval(function_call)
 
 	# Return updated configuration
