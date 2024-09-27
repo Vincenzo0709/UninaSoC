@@ -1,26 +1,19 @@
-# Variables
-PYTHON = python3.10
+# Environment check
+ifndef ROOT_DIR
+$(error Setup script settings.sh has not been sourced, aborting)
+endif
 
-all: xilinx hw sw
+all: config
 
 hw:
 
 xilinx:
 	${MAKE} -C ${XILINX_ROOT}
 
-.PHONY:
+config:
+	${MAKE} -C ${CONFIG_ROOT} ${CONFIG_CSV}
+
 sw:
 	${MAKE} -C ${SW_ROOT}
 
-.PHONY: sim xilinx sw
-
-AXI_CONFIG  ?= config/axi_memory_map/configs/PoC_config.csv
-# AXI_CONFIG  ?= config/axi_memory_map/configs/config.csv
-OUTPUT_FILE ?= hw/xilinx/ips/xlnx_axi_crossbar/config.tcl
-config_axi:
-	${PYTHON} config/axi_memory_map/create_crossbar_config.py \
-		${AXI_CONFIG} \
-		${OUTPUT_FILE}
-	@echo "Output file is at ${OUTPUT_FILE}"
-
-
+.PHONY: sim xilinx sw config

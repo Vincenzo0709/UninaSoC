@@ -1,3 +1,8 @@
+# Environment check
+ifndef XILINX_ROOT
+$(error Setup script settings.sh has not been sourced, aborting)
+endif
+
 # Basic variables for Vivado
 XILINX_VIVADO_CMD ?= vivado
 XILINX_VIVADO_MODE ?= batch

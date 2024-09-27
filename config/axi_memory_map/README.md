@@ -1,4 +1,5 @@
 #  AXI Crossbar Configuration Generator
+This tree allows for the automatic generation of the AXI crossbar IP and linker script for software development.
 
 ## Prerequisites and Tools versions
 This tree has been verified with the following tools and versions
@@ -9,7 +10,6 @@ This tree has been verified with the following tools and versions
 
 # #  Configuration file format
 The input configuration file is a CSV file. Each row of this file holds a property name and value pair. Some properties are array, with elements separated by a space " " character. The following table details the supported properties.
-
 
 | Name  | Description | Values | Default
 |-|-|-|-|
@@ -42,3 +42,6 @@ The input configuration file is a CSV file. Each row of this file holds a proper
 | WUSER_WIDTH           | AXI  W User width                                         | (0..1024)                                                 | 0
 | RUSER_WIDTH           | AXI  R User width                                         | (0..1024)                                                 | 0
 | BUSER_WIDTH           | AXI  B User width                                         | (0..1024)                                                 | 0
+
+## Genenerate Configurations
+To generate configurations,

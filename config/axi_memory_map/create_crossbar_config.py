@@ -2,7 +2,9 @@
 # Author: Stefano Toscano <stefa.toscano@studenti.unina.it>
 # Author: Vincenzo Maisto <vincenzo.maisto2@unina.it>
 # Description:
-#   Generate a valid AXI Crossbar tcl configuration file.
+#   Generate an AXI Crossbar tcl configuration file.
+# Note:
+#   Addresses overlaps are not sanitized.
 # Args:
 #   1: Input configuration file
 #   2: Output generated tcl file
@@ -11,6 +13,7 @@
 # Import libraries #
 ####################
 # Parse args
+import os
 import sys
 # Manipulate CSV
 import pandas as pd
@@ -52,8 +55,8 @@ def compose_index ( index_int : int ):
     # Return
     return index_string
 
-# Avoid Pandas data truncations
-pd.set_option('display.max_colwidth', 1000)
+# Avoid Pandas print truncations
+# pd.set_option('display.max_colwidth', 1000)
 
 # Init configuration
 config = configuration.Configuration()
@@ -189,7 +192,7 @@ config_list.extend(BASE_ID_config_list)
 # Creates the actual TCL file
 file = open(config_tcl_file_name,  "w")
 # Write header lines
-write_tcl.initialize_File(file)
+write_tcl.initialize_File(file, os.path.basename(__file__))
 
 # Write properties
 for command in config_list:
