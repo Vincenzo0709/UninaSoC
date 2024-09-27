@@ -198,7 +198,7 @@ write_tcl.initialize_File(file, os.path.basename(__file__))
 for command in config_list:
 	write_tcl.write_single_value_configuration(file, command)
 	# Add new line
-	file.write(" \\\r                         ")
+	file.write(" \\\n                         ")
 
 # Write closing lines
 write_tcl.end_File(file)
