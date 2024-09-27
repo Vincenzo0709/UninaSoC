@@ -1,18 +1,18 @@
-/*This file is auto-generated with CreateLinkerScript.py*/
+/* This file is auto-generated with create_linker_script.py */
 
-/*Memories definition*/
+/* Memory blocks */
 MEMORY
 {
-		BRAM (xrw) : ORIGIN = 0x0000000000000000, LENGTH = 24
-		PERIPHERALS (rw) : ORIGIN = 0x00000000000000c0, LENGTH = 48
+	BRAM (xrw) : ORIGIN = 0x0,  LENGTH = 0x20000
+	PERIPHERALS (rw) : ORIGIN = 0x20000,  LENGTH = 0x2000
 }
 
-/*Sections*/
+/* Sections */
 SECTIONS
 {
-		_slave_Slave_Name_A_base = 0x0000000000000000;
-		_slave_Slave_Name_A_end = 0x00000000000000c0;
-		_slave_Slave_Name_B_base = 0x0001000000000000;
-		_slave_Slave_Name_B_end = 0x0001000000000180;
+	_slave_BRAM_base = 0x0;
+	_slave_BRAM_end = 0x20000;
+	_slave_GPIO_out_base = 0x20000;
+	_slave_GPIO_out_end = 0x22000;
 }
 

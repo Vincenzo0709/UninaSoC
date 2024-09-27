@@ -4,7 +4,7 @@
 # Wrapper class for configuration properties
 class Configuration:
 	PROTOCOL			: str = "AXI4"	# AXI PROTOCOL used
-	CONNECTIVITY_MODE	: str = "SASD"	# Crossbar Configuration, Shared-Address/Multiple-Data(SAMD) or Shared-Address/Shared-Data(SASD)
+	CONNECTIVITY_MODE	: str = "SAMD"	# Crossbar Configuration, Shared-Address/Multiple-Data(SAMD) or Shared-Address/Shared-Data(SASD)
 	ADDR_WIDTH			: int = 32 		# Address Width
 	DATA_WIDTH			: int = 32 		# Data Width
 	ID_WIDTH			: int = 4		# ID Data Width for MI and SI (a subset of it is used by the Interfaces Thread IDs)

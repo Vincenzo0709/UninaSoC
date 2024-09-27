@@ -8,13 +8,16 @@ This tree has been verified with the following tools and versions
 * Pyhton >= 3.10
 * Pandas >= 2.2.3
 
-# #  Configuration file format
-The input configuration file is a CSV file. Each row of this file holds a property name and value pair. Some properties are array, with elements separated by a space " " character. The following table details the supported properties.
+##  Configuration file format
+The input configuration file is a CSV file. Each row of this file holds a property name and value pair.
+Some properties are array, with elements separated by a space " " character. The following table details the supported properties.
+
+> **IMPORTANT NOTE**: For now, addresses are not sanitized! Hence, in case of overlaps or width-related misconfiguration, the interconnect might not be fully funcional.
 
 | Name  | Description | Values | Default
 |-|-|-|-|
 | PROTOCOL              | AXI PROTOCOL                                              | (AXI4, AXI4LITE, AXI3)                                    | AXI4
-| CONNECTIVITY_MODE     | Crossbar Interconnection                                  | Shared-Address, Multiple-Data(SAMD), Shared-Address/Shared-Data(SASD)                | SASD
+| CONNECTIVITY_MODE     | Crossbar Interconnection                                  | Shared-Address, Multiple-Data(SAMD), Shared-Address/Shared-Data(SASD)                | SAMD
 | ADDR_WIDTH            | AXI Address Width                                         | (12..64) for AXI4 and AXI3, (1..64) for AXI4LITE          | 32
 | DATA_WIDTH            | AXI Data Width                                            | (32, 64, 128, 256, 512, 1024) for AXI4 and AXI3, (32, 64) for AXI4LITE | 32
 | ID_WIDTH              | AXI ID Width                                              | (4..32)                                                   | 4
@@ -44,4 +47,28 @@ The input configuration file is a CSV file. Each row of this file holds a proper
 | BUSER_WIDTH           | AXI  B User width                                         | (0..1024)                                                 | 0
 
 ## Genenerate Configurations
-To generate configurations,
+To generate configurations, set the `CONFIG_CSV` envvar to a config file and run:
+``` bash
+$ make config_axi # generates AXI crossbar config
+$ make config_ld # generates linker script
+```
+
+# Scripting Architecture
+The configuration scripting architecture is structured as in the following figure:
+
+![Configuration flow](./axi_xbar_config.png)
+
+* Linker script generation is handled solely by `create_linker_script.py` source.
+* TCL file generation is divided in multiple files, with `create_crossbar_config.py` as master script
+
+### How to add a new property
+To add a new property:
+1. In the target CSV file, e.g. `config.csv`, add the new key-value pair.
+2. In file `configuration.py`, add the new property to the config class. Name must match the key in `config.csv`.
+3. In file `parse_properties_wrapper.py`, file add a case that composes the new function call.
+4. In file `parse_properties_impl.py`, add a function that handles the new property:
+    - how it is parsed.
+    - how it is sanitized.
+    - how it updates the `configuration` structure.
+5. In file `create_crossbar_config.py` file, after the loop setting the `configuration` structure,
+create the tcl property string and add it to the list of commands, which will then be flushed on the output file.
