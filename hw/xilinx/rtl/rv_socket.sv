@@ -19,12 +19,12 @@ module rv_socket # (
     input  logic                            clk_i,
     input  logic                            rst_ni,        // System-wide reset (also resets core)
     input  logic                            core_resetn_i, // Core-only reset (does not reset DM and other modules)
-    input  logic [AXI_ADDR_WIDTH -1 : 0 ]   bootaddr_i,
+    input  logic [ADDR_WIDTH     -1 : 0 ]   bootaddr_i,
     input  logic [NUM_IRQ        -1 : 0 ]   irq_i,
 
     // Core
-    `DEFINE_AXI_MASTER_PORTS(rvm_socket_instr),
-    `DEFINE_AXI_MASTER_PORTS(rvm_socket_data),
+    `DEFINE_AXI_MASTER_PORTS(rv_socket_instr),
+    `DEFINE_AXI_MASTER_PORTS(rv_socket_data),
 
     // Debug module
     `DEFINE_AXI_MASTER_PORTS(dbg_master),
@@ -40,12 +40,12 @@ module rv_socket # (
     //////////////////////////////////////////////////////
 
     // Let's assume single core
-    localparam logic [31:0] hart_id = 32'h0;
-    localparam logic [31:0] DEBUG_START   = 32'h10000; // From config
+    localparam logic [DATA_WIDTH-1:0] hart_id = '0;
+    localparam logic [ADDR_WIDTH-1:0] DEBUG_START   = 'h10000; // From config
 
     // From dm_pkg
-    localparam logic [31:0] dm_HaltAddress = 64'h800;
-    localparam logic [31:0] dm_ExceptionAddress = dm_HaltAddress + 16;
+    localparam logic [ADDR_WIDTH-1:0] dm_HaltAddress = 'h800;
+    localparam logic [ADDR_WIDTH-1:0] dm_ExceptionAddress = dm_HaltAddress + 16;
 
     //////////////////////////////////////
     //    ___ _                _        //
@@ -77,6 +77,19 @@ module rv_socket # (
     //    \___\___/_| \___| |_|_\___\__, |_\___/_||_|   //
     //                              |___/               //
     //////////////////////////////////////////////////////
+
+    ////////////////////////////
+    // Core validity checking //
+    ////////////////////////////
+
+    // Check if the selected Core is compatible with the system XLEN
+    if ( DATA_WIDTH == 64 && CORE_SELECTOR inside {CORE_PICORV32,CORE_CV32E40P,CORE_IBEX,CORE_MICROBLAZEV} ||
+         DATA_WIDTH == 32 && CORE_SELECTOR inside {-1} )
+        $error($sformatf("[Socket] Illegal CORE (%0d) for the selected XLEN (%0d)", CORE_SELECTOR, DATA_WIDTH));
+
+    ////////////////////////
+    // Core Instantiation //
+    ////////////////////////
 
     generate
         if (CORE_SELECTOR == CORE_PICORV32) begin: core_picorv32
@@ -376,8 +389,8 @@ module rv_socket # (
 
 
             // Attach to socket
-            `ASSIGN_AXI_BUS( rvm_socket_data , microblaze_data );
-            `ASSIGN_AXI_BUS( rvm_socket_instr , converter_instr);
+            `ASSIGN_AXI_BUS( rv_socket_data , microblaze_data );
+            `ASSIGN_AXI_BUS( rv_socket_instr , converter_instr);
 
             // Tie-off undriven ID signals
             // ID's are set to zero since they are not present in microblaze, while the crossbar have ID's of size 2.
@@ -487,8 +500,8 @@ module rv_socket # (
     if ( !( CORE_SELECTOR inside {CORE_MICROBLAZEV} ) ) begin : mem_convert
 
         // Connect memory interfaces to socket output memory ports
-        `ASSIGN_AXI_BUS( rvm_socket_instr, core_instr_to_socket_instr );
-        `ASSIGN_AXI_BUS( rvm_socket_data, core_data_to_socket_data );
+        `ASSIGN_AXI_BUS( rv_socket_instr, core_instr_to_socket_instr );
+        `ASSIGN_AXI_BUS( rv_socket_data, core_data_to_socket_data );
 
         // Convert instructions socket (AXI) to core (MEM)
         custom_axi_from_mem axi_from_mem_instr_u (
