@@ -41,7 +41,7 @@ typedef logic                           mem_logic_t;
 ////////////////////////
 
 // Declare MEM bus specifying the DATA_WIDTH
-`define DECLARE_MEM_BUS(bus_name, DATA_WIDTH, ADDR_WIDTH, ID_WIDTH)   \
+`define DECLARE_MEM_BUS(bus_name, DATA_WIDTH, ADDR_WIDTH)   \
                                                 \
     mem_logic_t                     ``bus_name``_mem_req;       \
     mem_logic_t                     ``bus_name``_mem_gnt;       \
@@ -54,7 +54,7 @@ typedef logic                           mem_logic_t;
     mem_logic_t                     ``bus_name``_mem_error;
 
 // Declare MEM array
-`define DECLARE_MEM_BUS_ARRAY(array_name, size, DATA_WIDTH, ADDR_WIDTH, ID_WIDTH)   \
+`define DECLARE_MEM_BUS_ARRAY(array_name, size, DATA_WIDTH, ADDR_WIDTH)   \
                                                 \
     mem_logic_t [``size`` -1 : 0]                       ``bus_name``_mem_req;       \
     mem_logic_t [``size`` -1 : 0]                       ``bus_name``_mem_gnt;       \
@@ -112,7 +112,7 @@ typedef logic                           mem_logic_t;
 //////////////////
 
 // MEM MASTER PORTS
-`define DEFINE_MEM_MASTER_PORTS(bus_name, DATA_WIDTH, ADDR_WIDTH, ID_WIDTH)               \
+`define DEFINE_MEM_MASTER_PORTS(bus_name, DATA_WIDTH, ADDR_WIDTH)               \
     output mem_logic_t                  ``bus_name``_mem_req,        \
     input  mem_logic_t                  ``bus_name``_mem_gnt,        \
     input  mem_logic_t                  ``bus_name``_mem_valid,      \
@@ -123,7 +123,7 @@ typedef logic                           mem_logic_t;
     output logic [(DATA_WIDTH)/8-1 : 0] ``bus_name``_mem_be,         \
     input  mem_logic_t                  ``bus_name``_mem_error
 
-`define DEFINE_MEM_SLAVE_PORTS(bus_name, DATA_WIDTH, ADDR_WIDTH, ID_WIDTH)                \
+`define DEFINE_MEM_SLAVE_PORTS(bus_name, DATA_WIDTH, ADDR_WIDTH)                \
     input  mem_logic_t                  ``bus_name``_mem_req,        \
     output mem_logic_t                  ``bus_name``_mem_gnt,        \
     output mem_logic_t                  ``bus_name``_mem_valid,      \
