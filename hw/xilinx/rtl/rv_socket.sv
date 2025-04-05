@@ -65,8 +65,8 @@ module rv_socket # (
     `DECLARE_AXI_BUS(core_data_to_socket_data, LOCAL_DATA_WIDTH, LOCAL_ADDR_WIDTH, LOCAL_ID_WIDTH);
 
     // Declare MEM ports
-    `DECLARE_MEM_BUS(core_instr, LOCAL_DATA_WIDTH, LOCAL_ADDR_WIDTH, LOCAL_ID_WIDTH);
-    `DECLARE_MEM_BUS(core_data, LOCAL_DATA_WIDTH, LOCAL_ADDR_WIDTH, LOCAL_ID_WIDTH);
+    `DECLARE_MEM_BUS(core_instr, LOCAL_DATA_WIDTH, LOCAL_ADDR_WIDTH);
+    `DECLARE_MEM_BUS(core_data, LOCAL_DATA_WIDTH, LOCAL_ADDR_WIDTH);
 
     // Debug request DM -> RV core
     logic debug_req_core;
