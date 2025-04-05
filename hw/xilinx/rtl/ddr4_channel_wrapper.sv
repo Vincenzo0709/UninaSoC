@@ -18,7 +18,11 @@
 `include "uninasoc_pcie.svh"
 `include "uninasoc_ddr4.svh"
 
-module ddr4_channel_wrapper (
+module ddr4_channel_wrapper # (
+    parameter int unsigned    LOCAL_DATA_WIDTH  = 32,
+    parameter int unsigned    LOCAL_ADDR_WIDTH  = 32,
+    parameter int unsigned    LOCAL_ID_WIDTH    = 32
+    ) (
     // SoC clock and reset
     input logic clock_i,
     input logic reset_ni,
@@ -31,10 +35,10 @@ module ddr4_channel_wrapper (
     `DEFINE_DDR4_PORTS(x),
 
     // AXI-lite CSR interface
-    `DEFINE_AXILITE_SLAVE_PORTS(s_ctrl),
+    `DEFINE_AXILITE_SLAVE_PORTS(s_ctrl, LOCAL_DATA_WIDTH, LOCAL_ADDR_WIDTH, ID_WIDTH),
 
     // AXI4 Slave interface
-    `DEFINE_AXI_SLAVE_PORTS(s)
+    `DEFINE_AXI_SLAVE_PORTS(s, LOCAL_DATA_WIDTH, LOCAL_ADDR_WIDTH, ID_WIDTH)
 
 );
 
@@ -54,10 +58,10 @@ module ddr4_channel_wrapper (
     logic ddr_rst;
 
     // AXI bus from the clock converter to the dwidth converter
-    `DECLARE_AXI_BUS(clk_conv_to_dwidth_conv, 32)
+    `DECLARE_AXI_BUS(clk_conv_to_dwidth_conv, LOCAL_DATA_WIDTH, LOCAL_ADDR_WIDTH, ID_WIDTH)
 
     // AXI bus from the dwidth converter to the DDR4
-    `DECLARE_AXI_BUS(dwidth_conv_to_ddr4, 512)
+    `DECLARE_AXI_BUS(dwidth_conv_to_ddr4, 512, LOCAL_ADDR_WIDTH, ID_WIDTH)
 
     // Dwidth converter master ID signals assigned to 0
     // Since the AXI data width converter has a reordering depth of 1 it doesn't have ID in its master ports - for more details see the documentation

@@ -36,7 +36,10 @@ import uninasoc_pkg::*;
 `include "uninasoc_axi.svh"
 
 module peripheral_bus #(
-    parameter int unsigned    NUM_IRQ       = 4
+    parameter int unsigned    LOCAL_DATA_WIDTH  = 32,
+    parameter int unsigned    LOCAL_ADDR_WIDTH  = 32,
+    parameter int unsigned    LOCAL_ID_WIDTH    = 32,
+    parameter int unsigned    NUM_IRQ           = 4
     )(
     input logic main_clock_i,
     input logic main_reset_ni,
@@ -44,7 +47,7 @@ module peripheral_bus #(
     input logic PBUS_reset_ni,
 
     // AXI4 Slave interface from the main xbar
-    `DEFINE_AXI_SLAVE_PORTS(s),
+    `DEFINE_AXI_SLAVE_PORTS(s, LOCAL_DATA_WIDTH, LOCAL_ADDR_WIDTH, LOCAL_ID_WIDTH),
 
     // EMBEDDED ONLY
     // UART interface
@@ -64,7 +67,7 @@ module peripheral_bus #(
     // Buses declaration and concatenation //
     /////////////////////////////////////////
     `include "pbus_buses.svinc"
-    `DECLARE_AXI_BUS(to_prot_conv, AXI_DATA_WIDTH)
+    `DECLARE_AXI_BUS(to_prot_conv, LOCAL_DATA_WIDTH, LOCAL_ADDR_WIDTH, LOCAL_ID_WIDTH)
     
     ///////////////////////
     // Interrupt Signals //

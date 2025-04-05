@@ -38,8 +38,11 @@ import uninasoc_pkg::*;
 `include "uninasoc_axi.svh"
 `include "uninasoc_pcie.svh"
 
-module sys_master
-(
+module sys_master # (
+    parameter int unsigned    LOCAL_DATA_WIDTH  = 32,
+    parameter int unsigned    LOCAL_ADDR_WIDTH  = 32,
+    parameter int unsigned    LOCAL_ID_WIDTH    = 32
+    ) (
 
     // EMBEDDED ONLY
     // Input clock and reset
@@ -69,7 +72,7 @@ module sys_master
     output logic rstn_250MHz_o,      // HPC ONLY
 
     // AXI Master interface
-    `DEFINE_AXI_MASTER_PORTS(m)
+    `DEFINE_AXI_MASTER_PORTS(m, LOCAL_DATA_WIDTH, LOCAL_ADDR_WIDTH, LOCAL_ID_WIDTH)
 );
 
     ////////////////////////////////////
@@ -185,8 +188,8 @@ module sys_master
     logic axi_aclk;
     logic axi_aresetn;
 
-    `DECLARE_AXI_BUS(xdma_to_axi_dwidth_converter, XDMA_DATA_WIDTH);
-    `DECLARE_AXI_BUS(axi_dwidth_converter_to_clock_converter, AXI_DATA_WIDTH);
+    `DECLARE_AXI_BUS(xdma_to_axi_dwidth_converter, XDMA_DATA_WIDTH, LOCAL_ADDR_WIDTH, LOCAL_ID_WIDTH);
+    `DECLARE_AXI_BUS(axi_dwidth_converter_to_clock_converter, LOCAL_DATA_WIDTH, LOCAL_ADDR_WIDTH, LOCAL_ID_WIDTH);
 
     // Clock Wizard
     xlnx_clk_wiz_hpc clkwiz_u (
