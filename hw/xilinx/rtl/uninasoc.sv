@@ -88,9 +88,10 @@ module uninasoc (
     // Local variables //
     /////////////////////
 
-    localparam LOCAL_DATA_WIDTH = DATA_WIDTH;
-    localparam LOCAL_ADDR_WIDTH = ADDR_WIDTH;
-    localparam LOCAL_ID_WIDTH = ID_WIDTH;
+    // SYS_* params are verilog defines. They depend on the config flow (see config.mk)
+    localparam LOCAL_DATA_WIDTH = SYS_DATA_WIDTH;
+    localparam LOCAL_ADDR_WIDTH = SYS_ADDR_WIDTH;
+    localparam LOCAL_ID_WIDTH = SYS_ID_WIDTH;
     localparam peripherals_interrupts_num = 4;
 
     ///////////////////

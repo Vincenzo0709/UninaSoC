@@ -50,7 +50,7 @@ module virtual_uart # (
     localparam STS_TX_EMPTY_BIT = 2;     // Status  - TX register empty
     localparam STS_TX_FULL_BIT  = 3;     // Status  - TX register full
 
-    logic [AXI_DATA_WIDTH-1:0] uart_csr [0:4];
+    logic [LOCAL_DATA_WIDTH-1:0] uart_csr [0:4];
 
 
     /* AXILITE Write logic */
