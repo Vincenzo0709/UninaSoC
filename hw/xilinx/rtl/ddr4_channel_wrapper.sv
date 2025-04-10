@@ -57,6 +57,10 @@ module ddr4_channel_wrapper # (
     logic ddr_clk;
     logic ddr_rst;
 
+    // DDR4 34-bits address signals
+    logic [33:0] ddr4_axi_awaddr;
+    logic [33:0] ddr4_axi_araddr;
+
     // AXI bus from the clock converter to the dwidth converter
     `DECLARE_AXI_BUS(clk_conv_to_dwidth_conv, LOCAL_DATA_WIDTH, LOCAL_ADDR_WIDTH, ID_WIDTH)
 
@@ -71,8 +75,15 @@ module ddr4_channel_wrapper # (
     assign dwidth_conv_to_ddr4_axi_arid = '0;
     assign dwidth_conv_to_ddr4_axi_rid  = '0;
 
-    // AXI Clock converter from 250 MHz (xdma global design clk) to 300 MHz (AXI user interface DDR clk) - the data width here is 32 bit
-    xlnx_axi_clock_converter axi_clk_conv_u (
+    // AXI Clock converter from 250 MHz (xdma global design clk) to 300 MHz (AXI user interface DDR clk) - the data width is XLEN
+    axi_clock_converter_wrapper # (
+
+        .LOCAL_DATA_WIDTH   (LOCAL_DATA_WIDTH),
+        .LOCAL_ADDR_WIDTH   (LOCAL_ADDR_WIDTH),
+        .LOCAL_ID_WIDTH     (LOCAL_ID_WIDTH)
+
+        ) axi_clk_conv_u (
+
         .s_axi_aclk     ( clock_i        ),
         .s_axi_aresetn  ( reset_ni       ),
 
@@ -162,7 +173,7 @@ module ddr4_channel_wrapper # (
     );
 
 
-    // AXI dwith converter from 32 bit (global AXI data width) to 512 bit (AXI user interface DDR data width)
+    // AXI dwith converter from XLEN bit (global AXI data width) to 512 bit (AXI user interface DDR data width)
     xlnx_axi_dwidth_to512_converter axi_dwidth_conv_u (
         .s_axi_aclk     ( ddr_clk      ),
         .s_axi_aresetn  ( ~ddr_rst     ),
@@ -249,6 +260,10 @@ module ddr4_channel_wrapper # (
         .m_axi_rready   ( dwidth_conv_to_ddr4_axi_rready  )
 
     );
+
+    // Map DDR4 address signals depending on system XLEN
+    assign ddr4_axi_awaddr = (LOCAL_ADDR_WIDTH == 32) ? { 2'b00, dwidth_conv_to_ddr4_axi_awaddr } : dwidth_conv_to_ddr4_axi_awaddr[33:0]:
+    assign ddr4_axi_awaddr = (LOCAL_ADDR_WIDTH == 32) ? { 2'b00, dwidth_conv_to_ddr4_axi_araddr } : dwidth_conv_to_ddr4_axi_araddr[33:0]:
 
     xlnx_ddr4 ddr4_u (
         .c0_sys_clk_n                ( clk_300mhz_0_n_i ),
@@ -343,7 +358,6 @@ module ddr4_channel_wrapper # (
         .c0_ddr4_s_axi_rid           ( dwidth_conv_to_ddr4_axi_rid     ),
         .c0_ddr4_s_axi_rdata         ( dwidth_conv_to_ddr4_axi_rdata   )
     );
-
 
 endmodule
 

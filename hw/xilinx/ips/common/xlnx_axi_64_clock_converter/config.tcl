@@ -9,6 +9,6 @@ set_property -dict [list \
 ] [get_ips $::env(IP_NAME)]
 
 # Use envvars out of list
-set_property CONFIG.DATA_WIDTH  $::env(64)          [get_ips $::env(IP_NAME)]
-set_property CONFIG.ADDR_WIDTH  $::env(64)          [get_ips $::env(IP_NAME)]
+set_property CONFIG.DATA_WIDTH  64                  [get_ips $::env(IP_NAME)]
+set_property CONFIG.ADDR_WIDTH  64                  [get_ips $::env(IP_NAME)]
 set_property CONFIG.ID_WIDTH    $::env(ID_WIDTH)    [get_ips $::env(IP_NAME)]
