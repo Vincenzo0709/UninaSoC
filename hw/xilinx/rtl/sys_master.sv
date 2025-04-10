@@ -284,7 +284,7 @@ module sys_master # (
         .s_axil_arprot  (3'b0)
     );
 
-    xlnx_axi_dwidth_64to32_converter xlnx_axi_dwidth_64to32_converter_u (
+    xlnx_axi_dwidth_64_to_32_converter xlnx_axi_dwidth_64_to_32_converter_u (
         .s_axi_aclk     ( axi_aclk    ),
         .s_axi_aresetn  ( axi_aresetn ),
 

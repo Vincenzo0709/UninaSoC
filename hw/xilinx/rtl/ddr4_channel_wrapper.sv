@@ -8,8 +8,8 @@
 //              It has the following sub-architecture
 //
 //
-//             _______________            ADDR: 32 bit  ____________  ADDR: 32 bit     ADDR: 34 bit    ____________
-//   250 MHz  |     Clock     | 300 MHz   DATA: 32 bit |   Dwidth   | DATA: 512 bit    DATA: 512 bit  |            |
+//             _______________            ADDR: XELN    ____________  ADDR: XLEN       ADDR: 34 bit    ____________
+//   250 MHz  |     Clock     | 300 MHz   DATA: XLEN   |   Dwidth   | DATA: 512 bit    DATA: 512 bit  |            |
 // ---------> |   Converter   |----------------------->| Converter  |-------------------------------->| DDR4 (MIG) |
 //            |_______________|                        |____________|                                 |____________|
 //
